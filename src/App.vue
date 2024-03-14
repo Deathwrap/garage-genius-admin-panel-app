@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
 import Sidebar from "./components/SideBar.vue";
 import AdminLogin from "./components/AdminLogin.vue";
 
@@ -29,6 +30,9 @@ export default {
     Sidebar,
     AdminLogin,
   },
+  computed: {
+    ...mapState(['isLoggedIn'])
+  },
   mounted() {
     // Проверяем наличие accessToken и refreshToken
     const accessToken = localStorage.getItem('accessToken');
@@ -36,19 +40,16 @@ export default {
 
     // Если токены присутствуют, перенаправляем пользователя на главную страницу администратора
     if (accessToken && refreshToken) {
-      this.$router.push('/admin/dashboard');
+      this.isLoggedIn = true;
     }
   },
-  data() {
-    return {
-      isLoggedIn: false, // Флаг для отслеживания состояния аутентификации
-    };
-  },
   methods: {
+    ...mapMutations(['setLogin']),
     // Обработчик успешной аутентификации
     handleLoginSuccess() {
+
       console.log("handleLoginSuccess")
-      this.isLoggedIn = true; // Устанавливаем флаг аутентификации в true
+      this.setLogin();// Устанавливаем флаг аутентификации в true
     },
   },
 };
