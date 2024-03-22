@@ -30,7 +30,13 @@ export default {
   methods: {
     async login() {
       try {
-        const { name, accessToken, refreshToken } = await axios.post(`http://localhost:5198/auth/admin/sign_in?Login=${this.username}&Password=${this.password}`);
+        const response = await axios.post(`http://localhost:5198/api/workers/auth/admin/sign_in`,
+            {
+              Login:this.username,
+              Password: this.password,
+            });
+        const {name, accessToken, refreshToken } = response.data; // Предположим, что сервер возвращает токены в таком формате
+
         localStorage.setItem('userName', name);
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);

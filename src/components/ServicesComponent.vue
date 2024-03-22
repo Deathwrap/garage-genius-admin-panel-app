@@ -10,8 +10,6 @@
         </div>
       </div>
     </div>
-    <add-category-modal v-if="showAddCategoriesModal" @add="addCategory" @close="showAddCategoriesModal = false"></add-category-modal>
-
     <!-- Категории услуг -->
     <div v-for="category in categories" :key="category.id">
       <div class="category-container">
@@ -51,6 +49,7 @@
       </table>
 
       <!-- Кнопка для добавления новой услуги -->
+      <add-category-modal v-if="showAddCategoriesModal" @add="addCategory" @close="showAddCategoriesModal = false"></add-category-modal>
       <add-service-modal v-if="showAddServiciesModal" :categoryId="activeCategoryId" @add="addService" @close="showAddServiciesModal = false"></add-service-modal>
     </div>
   </div>
@@ -58,8 +57,9 @@
 
 <script>
 import axios from 'axios';
-import AddCategoryModal from "@/components/AddCategoryModal.vue";
-import AddServiceModal from "@/components/AddServiceModal.vue";
+import AddCategoryModal from "@/components/Modals/AddCategoryModal.vue";
+import AddServiceModal from "@/components/Modals/AddServiceModal.vue";
+import api from "@/utils/api";
 
 export default {
   name: 'ServicesComponent',
@@ -86,7 +86,7 @@ export default {
     },
     async fetchCategories() {
       try {
-        const response = await axios.get('http://localhost:5198/api/services/categories');
+        const response = await api.get('api/services/categories');
         this.categories = response.data;
         await this.fetchServicesForCategories();
       } catch (error) {
@@ -96,7 +96,9 @@ export default {
     async fetchServicesForCategories() {
       try {
         for (const category of this.categories) {
-          const response = await axios.get(`http://localhost:5198/api/services/by-id?categoryId=${category.id}`);
+          const response = await api.get('api/services/by-id', {params: {
+            categoryId: category.id
+            }});
           category.services = response.data;
         }
       } catch (error) {
@@ -104,8 +106,7 @@ export default {
       }
     },
     addCategory(newCategoryName) {
-      axios.post(`http://localhost:5198/api/services/add-category?name=${newCategoryName}`, {
-      }).then(response => {
+      api.post('api/services/add-category', {}, {params: {name: newCategoryName}}).then(response => {
         // После успешного добавления автомобиля на сервер получаем carId из ответа
         const categoryId = response.data.categoryId;
         // Добавляем новый автомобиль в массив this.cars
