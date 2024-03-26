@@ -252,7 +252,7 @@ export default {
 .shift-button {
   width: 100%;
   height: 100%;
-  background-color: #4CAF50;
+  background-color: #4ca2ff;
   padding: 10px;
   font-size: 14px;
   border: none;

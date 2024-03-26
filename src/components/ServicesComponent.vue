@@ -41,8 +41,12 @@
           <td>{{ service.standardHourPrice }}</td>
           <!-- Кнопки для изменения и удаления услуги -->
           <td>
-            <button @click="editService(category, service)">Изменить</button>
-            <button @click="deleteService(category, service)">Удалить</button>
+            <button class="edit-btn" @click="editService(category, service)">
+              <img src="@/assets/pencil-square.svg" alt="Изменить" class="icon">
+            </button>
+            <button class="delete-btn" @click="deleteService(category, service)">
+              <img src="@/assets/trash-fill.svg" alt="Удалить" class="icon">
+            </button>
           </td>
         </tr>
         </tbody>
@@ -56,7 +60,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import AddCategoryModal from "@/components/Modals/AddCategoryModal.vue";
 import AddServiceModal from "@/components/Modals/AddServiceModal.vue";
 import api from "@/utils/api";
@@ -141,7 +144,7 @@ export default {
       }
       //category.services.push(newService);
 
-      axios.post(`http://localhost:5198/api/services/add-service`, {
+      api.post(`http://localhost:5198/api/services/add-service`, {
         categoryId: service.categoryId,// Используем полученный carId
         name: service.name,
         executionTime: service.executionTime,
@@ -271,4 +274,54 @@ th, td {
 th {
   background-color: #f2f2f2;
 }
+
+.delete-btn {
+  background-color: #dc3545; /* Цвет фона для кнопки удаления */
+  color: #fff; /* Цвет текста */
+  border: none; /* Убираем границы */
+  padding: 8px 16px; /* Отступы внутри кнопки */
+  border-radius: 5px; /* Закругляем углы */
+  cursor: pointer; /* Изменяем курсор при наведении */
+  transition: background-color 0.3s, color 0.3s; /* Плавное изменение цвета фона и текста при наведении */
+}
+
+.edit-btn{
+  background-color: #007bff; /* Цвет фона для кнопки удаления */
+  color: #fff; /* Цвет текста */
+  border: none; /* Убираем границы */
+  padding: 8px 16px; /* Отступы внутри кнопки */
+  border-radius: 5px; /* Закругляем углы */
+  cursor: pointer; /* Изменяем курсор при наведении */
+  transition: background-color 0.3s, color 0.3s; /* Плавное изменение цвета фона и текста при наведении */
+}
+
+.edit-btn:hover{
+  background-color: #0061d3; /* Изменяем цвет фона при наведении */
+}
+
+.delete-btn:hover {
+  background-color: #c82333; /* Изменяем цвет фона при наведении */
+}
+
+/* Отступы для значков внутри кнопок */
+.edit-btn img, .delete-btn img {
+  margin-right: 5px; /* Отступ справа */
+}
+
+/* Отступы для кнопок внутри ячейки таблицы */
+td .edit-btn, td .delete-btn {
+  margin-right: 5px;
+}
+
+.icon {
+  width: 20px; /* Ширина иконки */
+  height: 20px; /* Высота иконки */
+  vertical-align: middle; /* Отцентровка по вертикали */
+}
+
+.edit-btn img,
+.delete-btn img {
+  fill: white; /* Цвет иконок */
+}
+
 </style>

@@ -1,7 +1,5 @@
 <template>
   <div class="employees">
-    <h2>Список сотрудников</h2>
-    <button class="add-worker-button" @click="addWorkerButtonHandler">Добавить сотрудника</button>
     <table>
       <thead>
       <tr>
@@ -16,13 +14,16 @@
       </tr>
       </tbody>
     </table>
+    <div class="add-worker-container">
+      <button class="add-worker-button" @click="addWorkerButtonHandler">Добавить сотрудника</button>
+    </div>
     <add-worker-modal v-if="showAddWorkerModal" @add="addWorker" @close="showAddWorkerModal = false"></add-worker-modal>
     <worker-card v-if="showWorkerCardModal" @close="showWorkerCardModal = false" worker-id="1"></worker-card>
   </div>
 </template>
 
 <script>
-import api from "@/utils/api"
+import api from "@/utils/api";
 import AddWorkerModal from "@/components/Modals/AddWorkerModal.vue";
 import WorkerCard from "@/components/Modals/WorkerCard.vue";
 
@@ -99,23 +100,27 @@ export default {
   padding: 20px;
 }
 
+.add-worker-container {
+  text-align: left;
+  margin-top: 20px;
+}
+
 .add-worker-button {
-  background-color: #4CAF50;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 10px 20px;
+  padding: 8px 16px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: 14px;
   cursor: pointer;
   transition-duration: 0.4s;
 }
 
 .add-worker-button:hover {
-  background-color: #45a049;
+  background-color: #57a8ff;
 }
 
 .employees table {

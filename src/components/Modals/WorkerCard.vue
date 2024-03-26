@@ -2,34 +2,41 @@
   <div class="modal">
     <div class="modal-content">
       <button class="close-button" @click="closeModal">&times;</button>
-      <h3>Информация о работнике</h3>
-      <div class="worker-info">
-        <div><strong>Имя:</strong> {{ worker.name }}</div>
-        <div><strong>Логин:</strong> {{ worker.login }}</div>
-        <div><strong>Должность:</strong> {{ worker.position }}</div>
-        <div><strong>Категории:</strong>
-          <ul>
-            <li v-for="category in worker.categories" :key="category.id">{{ category.name }}</li>
-          </ul>
-        </div>
+      <div class="tabs">
+        <button :class="{ activeTab: activeTab === 'info', inactiveTab: activeTab !== 'info' }" @click="activeTab = 'info'">Информация</button>
+        <button :class="{ activeTab: activeTab === 'skills', inactiveTab: activeTab !== 'skills' }" @click="activeTab = 'skills'">Навыки</button>
+      </div>
+      <div v-show="activeTab === 'info'" class="worker-info">
+        <InfoTab :worker="worker"/>
+      </div>
+      <div v-show="activeTab === 'skills'" class="worker-skills">
+        <SkillsTab :categories="worker.categories"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import InfoTab from "@/components/InfoTab.vue";
+import SkillsTab from "@/components/SkillsTab.vue";
+
 export default {
   name: 'WorkerInfoModal',
+  components: {
+    InfoTab,
+    SkillsTab
+  },
   data() {
     return {
+      activeTab: 'info',
       worker: {
         name: 'John Doe',
         login: 'johndoe',
         position: 'Developer',
         categories: [
-          { id: 1, name: 'Category 1' },
-          { id: 2, name: 'Category 2' },
-          { id: 3, name: 'Category 3' }
+          {id: 1, name: 'Category 1'},
+          {id: 2, name: 'Category 2'},
+          {id: 3, name: 'Category 3'}
         ]
       }
     };
@@ -78,6 +85,38 @@ export default {
   color: #555;
 }
 
+.tabs {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s;
+  margin-right: 10px; /* Добавлено расстояние между вкладками */
+  font-size: 16px; /* Размер шрифта */
+  font-weight: bold;
+}
+
+
+.tabs button:last-child {
+  margin-right: 0; /* Убираем правый отступ для последней вкладки */
+}
+
+/* Псевдокласс :not() для изменения цвета при наведении на неактивную вкладку */
+.tabs button:not(.activeTab):hover {
+  border-color: #007bff;
+}
+
+.tabs button.activeTab {
+  border-color: #007bff;
+}
+
 .worker-info {
   margin-top: 20px;
 }
@@ -93,5 +132,9 @@ export default {
 
 .worker-info li {
   margin-left: 20px;
+}
+
+.tabs button.inactiveTab {
+  border-bottom: 2px solid #ccc; /* Цвет полоски для неактивной вкладки */
 }
 </style>
