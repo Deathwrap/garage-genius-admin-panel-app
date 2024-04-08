@@ -1,7 +1,6 @@
 <!-- InfoTab.vue -->
 <template>
   <div>
-    <h3>Информация о работнике</h3>
     <div><strong>Имя:</strong> {{ worker.name }}</div>
     <div><strong>Логин:</strong> {{ worker.login }}</div>
     <div><strong>Должность:</strong> {{ worker.position }}</div>

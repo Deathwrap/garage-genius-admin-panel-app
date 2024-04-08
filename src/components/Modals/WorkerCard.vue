@@ -6,11 +6,11 @@
         <button :class="{ activeTab: activeTab === 'info', inactiveTab: activeTab !== 'info' }" @click="activeTab = 'info'">Информация</button>
         <button :class="{ activeTab: activeTab === 'skills', inactiveTab: activeTab !== 'skills' }" @click="activeTab = 'skills'">Навыки</button>
       </div>
-      <div v-show="activeTab === 'info'" class="worker-info">
-        <InfoTab :worker="worker"/>
+      <div v-if="activeTab === 'info' && worker" class="worker-info">
+        <info-tab :worker="worker"/>
       </div>
-      <div v-show="activeTab === 'skills'" class="worker-skills">
-        <SkillsTab :categories="worker.categories"/>
+      <div v-if="activeTab === 'skills'" class="worker-skills">
+        <skills-tab :skills="workerSkills" :categories="categories" @addSkill="addSkillHandler"/>
       </div>
     </div>
   </div>
@@ -19,6 +19,7 @@
 <script>
 import InfoTab from "@/components/InfoTab.vue";
 import SkillsTab from "@/components/SkillsTab.vue";
+import api from "@/utils/api"; // Подключаем модуль для работы с API
 
 export default {
   name: 'WorkerInfoModal',
@@ -26,28 +27,87 @@ export default {
     InfoTab,
     SkillsTab
   },
+  props: {
+    workerId: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       activeTab: 'info',
-      worker: {
-        name: 'John Doe',
-        login: 'johndoe',
-        position: 'Developer',
-        categories: [
-          {id: 1, name: 'Category 1'},
-          {id: 2, name: 'Category 2'},
-          {id: 3, name: 'Category 3'}
-        ]
-      }
-    };
+      worker: null, // Добавляем свойство для хранения информации о рабочем
+      workerSkills: [], // Добавляем свойство для хранения навыков рабочего
+      categories: [] // Добавляем свойство для хранения категорий навыков
+    }
+  },
+  async created() {
+    // Выполняем асинхронные запросы при создании компонента
+    await this.fetchWorker();
+    await this.fetchSkills();
+    await this.fetchCategories();
   },
   methods: {
+    async fetchWorker() {
+      try {
+        const response = await api.get(`/api/workers/${this.workerId}`);
+        this.worker = response.data;
+      } catch (error) {
+        console.error('Ошибка при получении информации о рабочем:', error);
+      }
+    },
+    async fetchSkills() {
+      try {
+        const response = await api.get(`/api/workers/${this.workerId}/skills`);
+        this.workerSkills = response.data;
+      } catch (error) {
+        console.error('Ошибка при получении навыков рабочего:', error);
+      }
+    },
+    async fetchCategories() {
+      try {
+        const response = await api.get(`/api/services/categories`);
+        this.categories = response.data;
+      } catch (error) {
+        console.error('Ошибка при получении категорий навыков:', error);
+      }
+    },
+    addSkillHandler(categoryId) {
+      // Подготовка данных для запроса
+      const requestData = {
+        workerId: this.workerId,
+        categoryId: categoryId
+      };
+
+      // Отправка запроса на сервер
+      api.post('/api/workers/skills/add', requestData)
+          .then(response => {
+            // Получаем skillId из ответа сервера
+            const skillId = response.data.skillId;
+
+            // Создаем новый навык на основе полученных данных
+            const newSkill = {
+              id: skillId,
+              workerId: this.workerId,
+              categoryId: categoryId
+            };
+
+            // Добавляем новый навык в массив workerSkills
+            this.workerSkills.push(newSkill);
+
+            console.log('Навык успешно добавлен:', newSkill);
+          })
+          .catch(error => {
+            console.error('Ошибка при добавлении навыка:', error);
+          });
+    },
     closeModal() {
       this.$emit('close');
     }
   }
 }
 </script>
+
 
 <style scoped>
 .modal {

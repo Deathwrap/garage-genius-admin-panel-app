@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from "@/utils/api";
 
 export default {
   name: 'AddWorkerModal',
@@ -54,7 +54,7 @@ export default {
   methods: {
     async fetchPositions() {
       try {
-        const response = await axios.get('http://localhost:5198/api/workers/positions');
+        const response = await api.get('http://localhost:5198/api/workers/positions');
         this.positions = response.data;
       } catch (error) {
         console.error('Ошибка при загрузке списка должностей:', error);

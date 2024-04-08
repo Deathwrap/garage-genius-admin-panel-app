@@ -18,7 +18,7 @@
       <button class="add-worker-button" @click="addWorkerButtonHandler">Добавить сотрудника</button>
     </div>
     <add-worker-modal v-if="showAddWorkerModal" @add="addWorker" @close="showAddWorkerModal = false"></add-worker-modal>
-    <worker-card v-if="showWorkerCardModal" @close="showWorkerCardModal = false" worker-id="1"></worker-card>
+    <worker-card v-if="showWorkerCardModal" @close="showWorkerCardModal = false" :worker-id="this.activeWorkerId"></worker-card>
   </div>
 </template>
 
@@ -34,7 +34,8 @@ export default {
       workers: [],
       positions: [],
       showAddWorkerModal: false,
-      showWorkerCardModal: false
+      showWorkerCardModal: false,
+      activeWorkerId: null,
     };
   },
 
@@ -89,6 +90,7 @@ export default {
     },
     handleRowClick(workerId) {
       console.log('Выбрана строка с id:', workerId);
+      this.activeWorkerId = workerId;
       this.showWorkerCardModal = true;
     }
   }
